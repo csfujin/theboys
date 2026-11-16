@@ -25,7 +25,7 @@ void imprime_cjto_aux (struct cjto_t *c)
     printf(" ]");
 }
 
-// Imprime os IDs dos herois presentes com "[ ]"
+// Imprime os IDs dos herois presentes com "[ ]".
 void imprime_presentes (struct base *b)
 {
     printf("[");
@@ -36,6 +36,7 @@ void imprime_presentes (struct base *b)
     printf(" ]");
 }
 
+// Imprime os itens da fila de espera da base na forma [ a b c ].
 void imprime_fila_espera (struct base *b)
 {
     struct fila_nodo_t *atual = b->fila_espera->prim;
@@ -51,9 +52,10 @@ void imprime_fila_espera (struct base *b)
     printf(" ]");
 }
 
-// Ordena as distancias por insercao
+// Ordena as distancias das bases em relacao a missao, por insercao.
 void ordena_bases_dist (struct mundo *w, struct missao *m, int ids_b[], int dist[]) 
 {
+    // Vetores paralelos
     for (int i = 0; i < w->num_bases; i++) {
         ids_b[i] = i;
         dist[i] = dist_cartesiana(m->local, w->bases[i]->local);
@@ -75,6 +77,7 @@ void ordena_bases_dist (struct mundo *w, struct missao *m, int ids_b[], int dist
     }
 }
 
+// Une as habilidades dos herois ativos de uma base.
 struct cjto_t *uniao_hab_base (struct mundo *w, struct missao *m, struct base *b)
 {
     struct cjto_t *u = cjto_cria(w->num_habilidades);
@@ -89,7 +92,6 @@ struct cjto_t *uniao_hab_base (struct mundo *w, struct missao *m, struct base *b
         if (!h->estado)
             continue;
 
-        // depuracao
         printf("%6d: MISSAO %d HAB HEROI %2d: ", w->relogio, m->id, h->id);
         imprime_cjto_aux(h->habilidades);
         printf("\n");
@@ -99,7 +101,6 @@ struct cjto_t *uniao_hab_base (struct mundo *w, struct missao *m, struct base *b
                 cjto_insere(u, j);
     }
 
-    //depuracao
     printf("%6d: MISSAO %d UNIAO HAB BASE %d: ", w->relogio, m->id, b->id);
     imprime_cjto_aux(u);
     printf("\n");
@@ -107,6 +108,7 @@ struct cjto_t *uniao_hab_base (struct mundo *w, struct missao *m, struct base *b
     return u;
 }
 
+// Busca uma base que atenda as necessidades da missao.
 int busca_base (struct mundo *w, struct missao *m, struct cjto_t **uniao)
 {
     int ids_b[N_BASES];
@@ -120,14 +122,13 @@ int busca_base (struct mundo *w, struct missao *m, struct cjto_t **uniao)
         if(!b->estado)
             continue;
 
-        //depuracao
         printf("%6d: MISSAO %d BASE %d DIST %d HEROIS ", w->relogio, m->id, b->id, dist[i]);
         imprime_presentes(b);
         printf("\n");
 
         struct cjto_t *u = uniao_hab_base(w, m, b);
             
-        if (cjto_contem(u, m->habilidades)) {
+        if (u && cjto_contem(u, m->habilidades) == 1) {
             *uniao = u;
             return b->id;
         }
@@ -137,6 +138,7 @@ int busca_base (struct mundo *w, struct missao *m, struct cjto_t **uniao)
     return -1;
 }
 
+// Cumpre a missao, calculando o risco, possivel morte ou atribuindo experiencias.
 void cumpre_missao (struct mundo *w, struct missao *m, struct base *b)
 {
     est.m_cumpridas++;
@@ -159,7 +161,7 @@ void cumpre_missao (struct mundo *w, struct missao *m, struct base *b)
     }
 }
 
-// Agenda um evento.
+// Agenda um evento, inserindo os dados dentro da struct evento e depois inserindo o ev na lef.
 // Retorna -1 em erro e 0 em sucesso
 int agendar_ev (struct lef_t *lef, int tipo, int tempo, int d1, int d2)
 {

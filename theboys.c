@@ -9,7 +9,6 @@
 #include "entidades.h"
 #include "auxiliares.h"
 
-// minimize o uso de variáveis globais
 struct estatisticas est;
 
 int main ()

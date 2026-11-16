@@ -9,20 +9,20 @@
 #include "mundo.h"
 #include "auxiliares.h"
 
-// Cria os eventos iniciais
+// Agenda os eventos iniciais. Retorna -1 em erro e 0 em sucesso.
 int eventos_iniciais (struct mundo *w)
 {
-    // Agenda o evento CHEGA para cada herói
+    // CHEGA para cada heroi
     for (int i = 0; i < w->num_herois; i++) {
         int t = aleatorio(0, 4320); // 3 dias max
         int b = aleatorio(0, w->num_bases - 1);
 
-        // Dado1: ID heroi, Dado2: Id base.
+        // Dado1: ID heroi, Dado2: ID base.
         if(agendar_ev(w->lef, EV_CHEGA, t, i, b) < 0)
             return -1;
     }   
 
-    // Agenda os eventos MISSAO
+    // MISSAO
     for (int i = 0; i < w->num_missoes; i++) {
         int t = aleatorio(0, T_FIM_DO_MUNDO);
 
@@ -31,7 +31,7 @@ int eventos_iniciais (struct mundo *w)
             return -1;
     }
 
-    // Agenda os eventos INVADE
+    // INVADE
     for (int i = 0; i < w->num_invasoes; i++) {
         int t = aleatorio((60*24*3)+1, T_FIM_DO_MUNDO);
         int b = w->invasoes[i]->id_base;
@@ -41,6 +41,7 @@ int eventos_iniciais (struct mundo *w)
             return -1;
     }
 
+    // FIM
     if(agendar_ev(w->lef, EV_FIM, T_FIM_DO_MUNDO, -1, -1) < 0)
         return -1;
 
@@ -54,7 +55,7 @@ void ev_chega (struct mundo *w, struct evento *ev)
     struct heroi *h = w->herois[ev->dado1];
     struct base *b = w->bases[ev->dado2];
 
-    h->base = b->id; // Atualiza a base do heroi
+    h->base = b->id;
 
     int n_presentes = cjto_card(b->presentes);
     int na_fila = fila_tamanho(b->fila_espera);
@@ -146,7 +147,7 @@ void ev_sai (struct mundo *w, struct evento *ev)
     struct heroi *h = w->herois[ev->dado1];
     struct base *b = w->bases[ev->dado2];
 
-    // so sai quem esta na base
+    // Apenas quem esta na base pode sair.
     if(cjto_pertence(b->presentes, h->id) != 1)
         return;
 
@@ -160,6 +161,7 @@ void ev_sai (struct mundo *w, struct evento *ev)
     agendar_ev(w->lef, EV_AVISA, w->relogio, ev->dado2, -1);
 }
 
+// O heroi se desloca para uma base destino, pondendo ser a mesma onde já está.
 // Recebe: ev->dado1 = ID heroi, ev->dado2 = ID base (destino)
 void ev_viaja (struct mundo *w, struct evento *ev) 
 {
@@ -176,7 +178,7 @@ void ev_viaja (struct mundo *w, struct evento *ev)
     agendar_ev(w->lef, EV_CHEGA, w->relogio + duracao, h->id, dest->id);
 }
 
-// O heroi morre no instante T
+// O heroi morre e retirado da base e seus eventos sao retirados da lef.
 // Recebe: ev->dado1 = ID heroi, ev->dado2 = missao
 void ev_morre (struct mundo *w, struct evento *ev) 
 {
@@ -193,6 +195,7 @@ void ev_morre (struct mundo *w, struct evento *ev)
     agendar_ev(w->lef, EV_AVISA, w->relogio, b->id, -1);
 }
 
+// Procura base adequada e cumpre a missao se possivel, ou reagenda.
 // Recebe: ev->dado1 = ID missao, ev->dado2 = -1
 void ev_missao (struct mundo *w, struct evento *ev)
 {
@@ -221,6 +224,7 @@ void ev_missao (struct mundo *w, struct evento *ev)
     cumpre_missao(w, m, w->bases[bmp]);
 }
 
+// Base e herois presentes ficam no estado inativo.
 // Recebe ev->dado1 = ID da invasao, ev->dado2 = ID base
 void ev_invade (struct mundo *w, struct evento *ev)
 {
@@ -266,7 +270,7 @@ void ev_rec_base (struct mundo *w, struct evento *ev)
     agendar_ev(w->lef, EV_AVISA, w->relogio, ev->dado1, -1);
 }
 
-
+// Imprime estatisticas.
 void ev_fim (struct mundo *w)
 {
     printf("%6d: FIM\n", w->relogio);
@@ -293,11 +297,10 @@ void ev_fim (struct mundo *w)
         int tent = est.tentativas[i];
         soma_tent += tent;
 
-        if (tent > 0 && (!min || tent < min)) {
+        if (tent > 0 && (!min || tent < min))
             min = tent;
         if (tent > max)
             max = tent;
-        }
     }
 
     printf("EVENTOS TRATADOS: %d\n", est.ev_tratados);

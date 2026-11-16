@@ -11,8 +11,10 @@ struct coordenadas
     int y;
 };
 
+// Gera um numero aleatorio entre (x, y).
 int aleatorio(int min, int max);
 
+// Calcula a distancia cartesiana entre duas coordenadas.
 int dist_cartesiana(struct coordenadas, struct coordenadas);
 
 #endif

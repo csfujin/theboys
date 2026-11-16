@@ -12,7 +12,8 @@
 #define VEL_MIN 50    // Velocidade minima do heroi
 #define VEL_MAX 5000  // Velocidade maxima do heroi
 
-// Inicializacao de cada heroi.
+// -------------- INICIALIZACOES DE ENTIDADES ----------------
+// Inicializacao de cada heroi. Retorna -1 em erro 
 int ini_heroi (struct heroi *h, int n)
 {
     h->id = n;
@@ -76,8 +77,8 @@ struct mundo *falha_mundo (struct mundo *w)
     destroi_mundo(w);
     return NULL;
 }
-
 // -----------------------------------------------------------------
+
 // Inicializa o mundo e os conteúdos.
 struct mundo *ini_mundo ()
 {
@@ -99,7 +100,7 @@ struct mundo *ini_mundo ()
         return falha_mundo(w);
 
     // Alocacao de herois
-    w->herois = calloc(1, N_HEROIS * sizeof(struct heroi *));
+    w->herois = calloc(w->num_herois, sizeof(struct heroi *));
     if(!w->herois)
         return falha_mundo(w);
 
@@ -147,6 +148,7 @@ struct mundo *ini_mundo ()
     return w;
 }
 
+// Loop de simulacao de mundo e eventos.
 void simula_mundo (struct mundo *w) 
 {
 
@@ -221,8 +223,8 @@ void simula_mundo (struct mundo *w)
     }  
 }
 
-// Loops para aceitar um mundo que nao esteja completo
-// Destroi entidades, filas, conjuntos e por fim o mundo
+// Loops para aceitar um mundo que nao esteja completo.
+// Destroi entidades, filas, conjuntos e por fim, o mundo.
 void destroi_mundo(struct mundo *w)
 {
     if(!w)

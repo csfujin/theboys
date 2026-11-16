@@ -6,13 +6,13 @@
 
 // Inicializacao do mundo virtual
 #define T_INICIO 0
-#define T_FIM_DO_MUNDO 525600    //525600
-#define N_TAMANHO_MUNDO 20000     //20000
-#define N_HABILIDADES 10          //10
-#define N_HEROIS (N_HABILIDADES * 5)               //N_hab * 5
-#define N_BASES (N_HEROIS / 5)                //N_hero / 5
-#define N_MISSOES (T_FIM_DO_MUNDO / 100)              //t_fim / 100
-#define N_INVASOES (T_FIM_DO_MUNDO / 10000)             //t_fim / 10000
+#define T_FIM_DO_MUNDO 525600
+#define N_TAMANHO_MUNDO 20000
+#define N_HABILIDADES 10
+#define N_HEROIS (N_HABILIDADES * 5)
+#define N_BASES (N_HEROIS / 5)
+#define N_MISSOES (T_FIM_DO_MUNDO / 100)
+#define N_INVASOES (T_FIM_DO_MUNDO / 10000)
 
 struct estatisticas
 {
@@ -50,9 +50,10 @@ struct mundo
     struct lef_t *lef;                    // Lista de eventos futuros para a simulação.
 };
 
-// Inicializa o mundo e seus conteudos (herois, bases, missoes, invasoes, etc.)
+// Inicializa o mundo e seus conteudos (herois, bases, missoes, invasoes, etc.). Retorna a struct mundo.
 struct mundo *ini_mundo ();
 
+// Loop de simulacao do mundo e eventos.
 void simula_mundo (struct mundo *w);
 
 // Destroi o mundo e seus conteudos (herois, bases, missoes, invasoes, etc.)

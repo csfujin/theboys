@@ -9,7 +9,7 @@ int aleatorio(int min, int max)
     return min + rand() % (max - min + 1);
 }
 
-// Calcula a distancia cartesiana entre duas coordenadas
+// Calcula a distancia cartesiana entre duas coordenadas.
 int dist_cartesiana(struct coordenadas c1, struct coordenadas c2)
 {
     double dx = c2.x - c1.x;
